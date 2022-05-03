@@ -21,6 +21,9 @@ Differences:
 - Direct access to `FormControl` instances
 - Validation is done through functions.
 
+While the official guide contains some info on template-driven form, all of that will be skipped from now.
+And only Reactive forms notes (and correspondingly, codes) will follow.
+
 ## Setting up the Form Model
 Both reactive and template-driven forms are build on the following classes.
 

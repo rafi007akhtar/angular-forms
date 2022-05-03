@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { FavoriteColorComponent } from './favorite-color/favorite-color.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    FavoriteColorComponent
   ],
   imports: [
     BrowserModule,
