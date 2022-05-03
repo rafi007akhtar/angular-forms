@@ -45,7 +45,7 @@ Both the following images are taken from Angular's website.
 With reactive Forms, the `FormControl` instance always returns a new object value when the control's value is updated (more efficient).
 This is in comparison with template forms, which updates the form property to its new value (less efficient).
 
-## Form Validation
+## Testing
 Testing reactive forms happens through _two_ ways.
 
 **Testing View to Model**
