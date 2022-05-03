@@ -34,10 +34,47 @@ Both reactive and template-driven forms are build on the following classes.
 
 ## Data Flow in Reactive Forms
 Both the following images are taken from Angular's website.
-1. View to value ![Data Flow in Reactive Forms: View to Value](https://angular.io/generated/images/guide/forms-overview/dataflow-reactive-forms-vtm.png)
-2. Value to vieww ![Data Flow in Reactive Forms: Value to View](https://angular.io/generated/images/guide/forms-overview/dataflow-reactive-forms-mtv.png)
+1. View to value
+
+    ![Data Flow in Reactive Forms: View to Value](https://angular.io/generated/images/guide/forms-overview/dataflow-reactive-forms-vtm.png)
+2. Value to view
+
+    ![Data Flow in Reactive Forms: Value to View](https://angular.io/generated/images/guide/forms-overview/dataflow-reactive-forms-mtv.png)
 
 ### Mutability of the Data Model
 With reactive Forms, the `FormControl` instance always returns a new object value when the control's value is updated (more efficient).
 This is in comparison with template forms, which updates the form property to its new value (less efficient).
+
+## Form Validation
+Testing reactive forms happens through _two_ ways.
+
+**Testing View to Model**
+1. Query the input element:
+    ```ts
+    const input = fixture.nativeElement.query('input')
+    ```
+2. Change its value, and dispatch that change as a new event.
+    ```ts
+    const event = new Event('input');
+    input.value = 'Red';
+    input.dispatchEvent(event);
+    ```
+3. Expect the form control's value to match the view value.
+    ```ts
+    // here, `favoriteColorControl` is the name of the form control element
+    expect(fixture.componentInstance.favoriteColorControl.value).toEqual('Red');
+    ```
+
+**Testing Model to View**
+1. Change the form component's value.
+    ```ts
+    component.favoriteColorControl.setValue('Blue');
+    ```
+2. Query the input element, and expect its value to equal the form component's value.
+    ```ts
+    const input = fixture.nativeElement.query('input');
+    expect(input.val).toEqual('Blue');
+    ```
+
+Testing template forms has been skipped, but it can be found in the official docs, [here](https://angular.io/guide/forms-overview#testing-template-driven-forms).
 

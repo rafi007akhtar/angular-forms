@@ -26,10 +26,4 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('angular-forms');
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('angular-forms app is running!');
-  });
 });
