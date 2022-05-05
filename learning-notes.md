@@ -120,8 +120,8 @@ To create a form group, the steps are:
     public profileForm: FormGroup;
     ngOnInit(): void {
         this.profileForm = new FormGroup({
-        firstName: new FormControl(''),
-        lastName: new FormControl('')
+            firstName: new FormControl(''),
+            lastName: new FormControl('')
         });
     }
     ```

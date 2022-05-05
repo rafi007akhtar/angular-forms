@@ -7,6 +7,26 @@
     <label for="lastName">Last name: </label>
     <input type="text" formControlName="lastName">
 
+    <div formGroupName="address">
+        <h2>Address</h2>
+
+        <label for="street">Street: </label>
+        <input type="text" id="street" formControlName="street"> <br>
+
+        <label for="city">City: </label>
+        <input type="text" id="city" formControlName="city"> <br>
+
+        <label for="state">State: </label>
+        <input type="text" id="state" formControlName="state"> <br>
+
+        <label for="zip">Zip: </label>
+        <input type="number" id="zip" formControlName="zip"> <br>
+    </div>
+
+    <br>
+
+    Form value: {{ profileForm.value | json }}
+
     <p>Complete the form to enable submit.</p>
     <button type="submit" [disabled]="!profileForm.valid">Submit</button>
 </form>
