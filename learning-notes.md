@@ -161,10 +161,10 @@ this.profileForm = new FormGroup({
     firstName: new FormControl(''),
     lastName: new FormControl(''),
     address: new FormGroup({
-    street: new FormControl(''),
-    city: new FormControl(''),
-    state: new FormControl(''),
-    zip: new FormControl('')
+        street: new FormControl(''),
+        city: new FormControl(''),
+        state: new FormControl(''),
+        zip: new FormControl('')
     })
 });
 ```
@@ -181,4 +181,16 @@ And view:
     <label for="zip">Zip: </label>
     <input type="number" id="zip" formControlName="zip"> <br>
 </div>
+```
+
+### Update an element in the form
+To update one or more elements in the form, the method `patchValue` can be used.
+For example, to just update the name and address in the above form, you can write this:
+```ts
+this.profileForm.patchValue({
+    firstName: 'Sherlock',
+    address: {
+        street: '221 B, Baker Street'
+    }
+});
 ```

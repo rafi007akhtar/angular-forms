@@ -25,7 +25,11 @@
 
     <br>
 
-    Form value: {{ profileForm.value | json }}
+    Form value: {{ profileForm.value | json }} <br> <br>
+
+    <div>
+        If you want to load some predefined values, click on <button type="button" (click)="performPartialUpdate()">this button</button>.
+    </div>
 
     <p>Complete the form to enable submit.</p>
     <button type="submit" [disabled]="!profileForm.valid">Submit</button>
