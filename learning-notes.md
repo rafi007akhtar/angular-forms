@@ -147,3 +147,38 @@ To create a form group, the steps are:
         console.warn(this.profileForm.value);
     }
     ```
+
+### Nesting Form Groups
+To implement nesting,
+- Add a `FormGroup` inside the current `FormGroup` (TS).
+- Bind this form group with a div within the form element using `formGroupName` attribute (HTML).
+- Inside this form group, add the nested `FormControls` as required (TS).
+- Bind these controls with their corresponding input elements as usual, with `formControlName` attribute (HTML).
+
+For example, TS:
+```ts
+this.profileForm = new FormGroup({
+    firstName: new FormControl(''),
+    lastName: new FormControl(''),
+    address: new FormGroup({
+    street: new FormControl(''),
+    city: new FormControl(''),
+    state: new FormControl(''),
+    zip: new FormControl('')
+    })
+});
+```
+And view:
+```html
+<div formGroupName="address">
+    <h2>Address</h2>
+    <label for="street">Street: </label>
+    <input type="text" id="street" formControlName="street"> <br>
+    <label for="city">City: </label>
+    <input type="text" id="city" formControlName="city"> <br>
+    <label for="state">State: </label>
+    <input type="text" id="state" formControlName="state"> <br>
+    <label for="zip">Zip: </label>
+    <input type="number" id="zip" formControlName="zip"> <br>
+</div>
+```
