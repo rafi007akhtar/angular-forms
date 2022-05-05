@@ -222,3 +222,50 @@ For example:
     }
     ```
 The first value of each control array is the initial value of the form control. The arrays can have sync and async validators as the second and third values. For example, the first name be made mandtory by modifying it to `firstName: ['', Validators.required]`.
+
+## Form Array
+It is used to add form elements when their total number is not known beforehand.
+
+For example, to add a field to contain all "hobbies", `FormArray` can be used. Firstly, import it.
+```ts
+import { FormArray } from '@angular/forms';
+```
+
+Next, add a form array in your form builder.
+```ts
+this.profileForm = this.fb.group({
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
+    address: this.fb.group({
+        street: ['', Validators.required],
+        city: ['', Validators.required],
+        state: ['', Validators.required],
+        zip: ['', Validators.required]
+    }),
+    hobbies: this.fb.array([ this.fb.control('') ]) // NOTE: this line
+});
+```
+
+Next, add a getter to get this array, and a method to add to this array a new element.
+```ts
+get hobbies() {
+    return this.profileForm.get('hobbies') as FormArray;
+}
+
+addNewHobby() {
+    this.hobbies.push(this.fb.control(''));
+}
+```
+
+Finally, in the view, add a div to show all hobby arrays (as form inputs) and a button for adding a new hobby.
+```html
+<div formArrayName="hobbies">
+    My hobbies are:
+    <div *ngIf="hobbies.controls.length > 0">
+        <div *ngFor="let hobby of hobbies.controls; let i=index">
+            <input type="text"  [formControlName]="i"> <br>
+        </div>
+    </div>
+    <button type="button" (click)="addNewHobby()">Add New Hobby</button>
+</div>
+```
