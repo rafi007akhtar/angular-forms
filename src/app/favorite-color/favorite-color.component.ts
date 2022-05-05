@@ -17,7 +17,7 @@ export class FavoriteColorComponent implements OnInit, OnChanges {
   }
   
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log('form value:', this.favoriteColorControl.value);
+    console.log('form value:', this.favoriteColorControl.value);
   }
 
 }
