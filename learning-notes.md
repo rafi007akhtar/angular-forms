@@ -200,7 +200,7 @@ Form builders are created by importing them into the component, injecting it in 
 For example:
 - Import
     ```ts
-    import { FormBuilder } from '@angular/forms';
+    import { FormBuilder, Validators } from '@angular/forms';
     ```
 - Constructor
     ```ts
@@ -221,4 +221,4 @@ For example:
         });
     }
     ```
-The first value of each control array is the initial value of the form control. The arrays can have sync and async validators as the second and third values.
+The first value of each control array is the initial value of the form control. The arrays can have sync and async validators as the second and third values. For example, the first name be made mandtory by modifying it to `firstName: ['', Validators.required]`.
