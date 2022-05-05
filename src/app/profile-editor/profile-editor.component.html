@@ -31,6 +31,6 @@
         If you want to load some predefined values, click on <button type="button" (click)="performPartialUpdate()">this button</button>.
     </div>
 
-    <p>Complete the form to enable submit.</p>
+    <p>Complete the form to enable submit. Current status: {{ profileForm.status }}</p>
     <button type="submit" [disabled]="!profileForm.valid">Submit</button>
 </form>
