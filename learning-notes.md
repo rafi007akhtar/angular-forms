@@ -78,3 +78,29 @@ Testing reactive forms happens through _two_ ways.
 
 Testing template forms has been skipped, but it can be found in the official docs, [here](https://angular.io/guide/forms-overview#testing-template-driven-forms).
 
+# Reactive Forms
+To add a reactive form to your project, the steps are:
+1. Inside app module, import the following class, and add it to the list of `imports`.
+    ```ts
+    import { ReactiveFormsModule } from '@angular/forms';
+
+    @NgModule({
+        imports: [
+            ReactiveFormsModule,
+            // ... other imports
+        ], // ... and so on
+    })
+    ```
+2. Inside your component, import `FormControl`. and use it to instantiate its object.
+    ```ts
+    import { FormControl } from '@angular/forms';
+
+    ngOnInit(): void {
+        this.favoriteColorControl = new FormControl('');
+        // ... and so on
+    }
+    ```
+3. Bind this instance to the corresponding form element in the view.
+    ```html
+    <input type="text" [formControl]="favoriteColorControl">
+    ```
