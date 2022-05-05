@@ -194,3 +194,31 @@ this.profileForm.patchValue({
     }
 });
 ```
+
+## Form Builder
+Form builders are created by importing them into the component, injecting it in the constructor, and creating form group equivalents using its `group` method.
+For example:
+- Import
+    ```ts
+    import { FormBuilder } from '@angular/forms';
+    ```
+- Constructor
+    ```ts
+    constructor(private fb: FormBuilder) { }
+    ```
+- OnInit:
+    ```ts
+      ngOnInit(): void {
+        this.profileForm = this.fb.group({
+            firstName: [''],
+            lastName: [''],
+            address: this.fb.group({
+                street: [''],
+                city: [''],
+                state: [''],
+                zip: ['']
+            })
+        });
+    }
+    ```
+The first value of each control array is the initial value of the form control. The arrays can have sync and async validators as the second and third values.

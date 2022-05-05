@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-profile-editor',
@@ -10,17 +9,30 @@ import { FormGroup } from '@angular/forms';
 export class ProfileEditorComponent implements OnInit {
   public profileForm: FormGroup;
 
-  constructor() { }
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
-    this.profileForm = new FormGroup({
-      firstName: new FormControl(''),
-      lastName: new FormControl(''),
-      address: new FormGroup({
-        street: new FormControl(''),
-        city: new FormControl(''),
-        state: new FormControl(''),
-        zip: new FormControl('')
+    // NOTE: Uncomment to use Form Group instead
+    // this.profileForm = new FormGroup({
+    //   firstName: new FormControl(''),
+    //   lastName: new FormControl(''),
+    //   address: new FormGroup({
+    //     street: new FormControl(''),
+    //     city: new FormControl(''),
+    //     state: new FormControl(''),
+    //     zip: new FormControl('')
+    //   })
+    // });
+
+    // NOTE: Uncomment to use Form Builder instead
+    this.profileForm = this.fb.group({
+      firstName: [''],
+      lastName: [''],
+      address: this.fb.group({
+        street: [''],
+        city: [''],
+        state: [''],
+        zip: ['']
       })
     });
   }
