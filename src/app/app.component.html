@@ -1,2 +1,15 @@
 <!-- <app-favorite-color></app-favorite-color> -->
-<app-name-editor></app-name-editor>
+
+<!-- Below code entirely borrowed from: https://stackblitz.com/run?file=src%2Fapp%2Fapp.component.html -->
+<h1>Reactive Forms</h1>
+
+<nav>
+  <button type="button" (click)="toggleEditor('name')">Name Editor</button>
+  <button type="button" (click)="toggleEditor('profile')">Profile Editor</button>
+</nav>
+
+<br>
+
+<app-name-editor *ngIf="showNameEditor"></app-name-editor>
+
+<app-profile-editor *ngIf="showProfileEditor"></app-profile-editor>

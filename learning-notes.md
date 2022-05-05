@@ -104,3 +104,46 @@ To add a reactive form to your project, the steps are:
     ```html
     <input type="text" [formControl]="favoriteColorControl">
     ```
+
+## Form Group
+A form group is, to put it loosely, a gathering of form controls.
+
+To create a form group, the steps are:
+1. In your TS file of the component, import `FormGroup` (in addition to importing `FormControl`).
+    ```ts
+    import { FormControl } from '@angular/forms';
+    import { FormGroup } from '@angular/forms';
+
+    ```
+2. Create a new variable with the form group type, and initialize it with the needed form controls.
+    ```ts
+    public profileForm: FormGroup;
+    ngOnInit(): void {
+        this.profileForm = new FormGroup({
+        firstName: new FormControl(''),
+        lastName: new FormControl('')
+        });
+    }
+    ```
+
+3. In the view, create a form element, and bind it wwith the form group created in TS. Inside the form element, create the input elements and bind each one of them with the its corresponding form control in the TS. (Binding happens through only an _attribute_ instead of an actual one-way bind.)
+    ```html
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <label for="firstName">First name: </label>
+        <input type="text" formControlName="firstName">
+
+        <label for="lastName">Last name: </label>
+        <input type="text" formControlName="lastName">
+
+        <p>Complete the form to enable submit.</p>
+        <button type="submit" [disabled]="!profileForm.valid">Submit</button>
+    </form>
+    ```
+
+4. As shown above, form submission can be done using the `ngSubmit` event binding, whose value will be the submit method defined in the TS. This method will be called when the button with `submit` type will be clicked in the form.
+    ```ts
+    onSubmit() {
+        // TODO: Use EventEmitter with form value
+        console.warn(this.profileForm.value);
+    }
+    ```
