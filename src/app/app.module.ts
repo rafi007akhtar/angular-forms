@@ -6,11 +6,13 @@ import { AppComponent } from './app.component';
 import { FavoriteColorComponent } from './favorite-color/favorite-color.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
+import { NameEditorComponent } from './name-editor/name-editor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    FavoriteColorComponent
+    FavoriteColorComponent,
+    NameEditorComponent
   ],
   imports: [
     BrowserModule,
