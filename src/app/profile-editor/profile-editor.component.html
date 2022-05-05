@@ -31,6 +31,17 @@
         If you want to load some predefined values, click on <button type="button" (click)="performPartialUpdate()">this button</button>.
     </div>
 
+    <div formArrayName="hobbies">
+        My hobbies are:
+        <div *ngIf="hobbies.controls.length > 0">
+            <div *ngFor="let hobby of hobbies.controls; let i=index">
+                <input type="text"  [formControlName]="i"> <br>
+            </div>
+        </div>
+
+        <button type="button" (click)="addNewHobby()">Add New Hobby</button>
+    </div>
+
     <p>Complete the form to enable submit. Current status: {{ profileForm.status }}</p>
     <button type="submit" [disabled]="!profileForm.valid">Submit</button>
 </form>

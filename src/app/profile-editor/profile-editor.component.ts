@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-profile-editor',
@@ -33,7 +33,8 @@ export class ProfileEditorComponent implements OnInit {
         city: ['', Validators.required],
         state: ['', Validators.required],
         zip: ['', Validators.required]
-      })
+      }),
+      hobbies: this.fb.array([ this.fb.control('') ])
     });
   }
 
@@ -49,6 +50,14 @@ export class ProfileEditorComponent implements OnInit {
         street: '221 B, Baker Street'
       }      
     });
+  }
+
+  get hobbies() {
+    return this.profileForm.get('hobbies') as FormArray;
+  }
+
+  addNewHobby() {
+    this.hobbies.push(this.fb.control(''));
   }
 
 }
