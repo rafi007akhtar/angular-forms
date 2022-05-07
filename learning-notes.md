@@ -269,3 +269,21 @@ Finally, in the view, add a div to show all hobby arrays (as form inputs) and a 
     <button type="button" (click)="addNewHobby()">Add New Hobby</button>
 </div>
 ```
+
+# Validating form input
+Skipping much of the content for now, and jumping directly to the one I want to. Will cover the remaining content soon enough.
+
+## Control Status CSS Classes
+The status of the form can be obtained through the following CSS classes.
+```css
+.ng-valid /* when there are no errors in the form */
+.ng-invalid /* when there is at least 1 error in the form */
+.ng-pristine /* when the user is yet to make any changes to the watched field */
+.ng-dirty /* when the user changes the value in the watched field */
+.ng-touched /* when the user blurs the form control element */
+.ng-untouched /* when the user is yet to focus on the form field */
+.ng-pending
+.ng-submitted  /* only on form element enclosures */
+```
+
+
