@@ -1,4 +1,4 @@
-<form [formGroup]="heroForm">
+<form [formGroup]="heroForm" (ngSubmit)="submission()">
     <label for="name">Name: </label>
     <input type="text" required id="name" class="form-control" formControlName="name">
 
@@ -11,6 +11,8 @@
     </div>
 
     <br><br>
+    <div>Validation status: <span class="heroForm-status" [innerHTML]="heroForm.status"></span></div>
+    <br>
     <button type="submit" [disabled]="heroForm.invalid">Submit</button>
 </form>
 

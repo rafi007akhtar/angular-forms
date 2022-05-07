@@ -1,0 +1,10 @@
+$valid-status: #42A948;
+$invalid-status: #a94442;
+
+.ng-invalid .heroForm-status {
+    color: $invalid-status;
+}
+
+.ng-valid .heroForm-status {
+    color: $valid-status;
+}

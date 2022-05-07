@@ -36,6 +36,10 @@ export class HeroFormComponent implements OnInit {
 
   get power() { return this.heroForm.get('power') };
 
+  submission() {
+    console.log('Errors in this form:', this.name.errors);
+  }
+
   forbiddenNameValidator(nameRe: RegExp): ValidatorFn {
     // return a method that takes in a form control and returns a ValidationErrors object
     return (control: AbstractControl): ValidationErrors => {
