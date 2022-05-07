@@ -8,13 +8,15 @@ import { FavoriteColorComponent } from './favorite-color/favorite-color.componen
 import { ReactiveFormsModule } from '@angular/forms';
 import { NameEditorComponent } from './name-editor/name-editor.component';
 import { ProfileEditorComponent } from './profile-editor/profile-editor.component';
+import { HeroFormComponent } from './hero-form/hero-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FavoriteColorComponent,
     NameEditorComponent,
-    ProfileEditorComponent
+    ProfileEditorComponent,
+    HeroFormComponent
   ],
   imports: [
     BrowserModule,

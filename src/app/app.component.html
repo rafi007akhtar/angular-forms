@@ -4,8 +4,9 @@
 <h1>Reactive Forms</h1>
 
 <nav>
-  <button type="button" (click)="toggleEditor('name')">Name Editor</button>
-  <button type="button" (click)="toggleEditor('profile')">Profile Editor</button>
+  <button type="button" (click)="toggleEditor('name')">Name Editor</button> &emsp;
+  <button type="button" (click)="toggleEditor('profile')">Profile Editor</button> &emsp;
+  <button type="button" (click)="toggleEditor('hero')">Hero Form</button>
 </nav>
 
 <br>
@@ -13,3 +14,5 @@
 <app-name-editor *ngIf="showNameEditor"></app-name-editor>
 
 <app-profile-editor *ngIf="showProfileEditor"></app-profile-editor>
+
+<app-hero-form *ngIf="showHeroForm"></app-hero-form>

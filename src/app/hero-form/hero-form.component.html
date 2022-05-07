@@ -1,0 +1,16 @@
+<form [formGroup]="heroForm">
+    <label for="name">Name: </label>
+    <input type="text" required id="name" class="form-control" formControlName="name">
+
+    <div *ngIf="name.invalid && (name.dirty || name.touched)">
+        <div *ngIf="name.errors?.required">Name is required</div>
+        <div *ngIf="name.errors?.minlength"> <!-- NOTE: in view => minlength, in TS => minLength -->
+            Name should be min 4 characters long
+        </div>
+        <div></div>
+    </div>
+
+    <br><br>
+    <button type="submit" [disabled]="heroForm.invalid">Submit</button>
+</form>
+

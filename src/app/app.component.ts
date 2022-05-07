@@ -2,7 +2,7 @@
 
 import { Component } from '@angular/core';
 
-export type EditorType = 'name' | 'profile';
+export type EditorType = 'hero' | 'profile' | 'name';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +11,7 @@ export type EditorType = 'name' | 'profile';
 })
 export class AppComponent {
   title = 'angular-forms';
-  editor: EditorType = 'name';
+  editor: EditorType = 'hero';
 
   get showNameEditor() {
     return this.editor === 'name';
@@ -19,6 +19,10 @@ export class AppComponent {
 
   get showProfileEditor() {
     return this.editor === 'profile';
+  }
+
+  get showHeroForm() {
+    return this.editor === 'hero';
   }
 
   toggleEditor(editorChosen: EditorType) {
