@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+// NOTE: no need of a separate directive for reactive forms; writing a validator method will suffice.
+// import { forbiddenNameValidator } from '../forbidden-name-validator.directive';
 
 @Component({
   selector: 'app-hero-form',
@@ -19,8 +21,11 @@ export class HeroFormComponent implements OnInit {
 
     this.heroForm = this.fb.group({
       name: [
-        this.hero.name,
-        [Validators.required, Validators.minLength(4)]
+        this.hero.name, [
+          Validators.required,
+          Validators.minLength(4),
+          this.forbiddenNameValidator(/voldemort/i)
+        ]
       ],
       alterEgo: [this.hero.alterEgo],
       power: [this.hero.power, Validators.required]
@@ -30,5 +35,13 @@ export class HeroFormComponent implements OnInit {
   get name() { return this.heroForm.get('name') };
 
   get power() { return this.heroForm.get('power') };
+
+  forbiddenNameValidator(nameRe: RegExp): ValidatorFn {
+    // return a method that takes in a form control and returns a ValidationErrors object
+    return (control: AbstractControl): ValidationErrors => {
+      const forbidden = nameRe.test(control.value);
+      return forbidden ? {forbiddenName: {value: control.value}} : null
+    }
+  }
 
 }

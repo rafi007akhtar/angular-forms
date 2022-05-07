@@ -7,7 +7,7 @@
         <div *ngIf="name.errors?.minlength"> <!-- NOTE: in view => minlength, in TS => minLength -->
             Name should be min 4 characters long
         </div>
-        <div></div>
+        <div *ngIf="name.errors?.forbiddenName"><em>Voldemort</em> is a forbidden name.</div>
     </div>
 
     <br><br>
