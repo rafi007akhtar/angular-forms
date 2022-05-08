@@ -126,7 +126,7 @@ To create a form group, the steps are:
     }
     ```
 
-3. In the view, create a form element, and bind it wwith the form group created in TS. Inside the form element, create the input elements and bind each one of them with the its corresponding form control in the TS. (Binding happens through only an _attribute_ instead of an actual one-way bind.)
+3. In the view, create a form element, and bind it with the form group created in TS. Inside the form element, create the input elements and bind each one of them with the its corresponding form control in the TS. (Binding happens through only an _attribute_ instead of an actual one-way bind.)
     ```html
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
         <label for="firstName">First name: </label>
@@ -417,7 +417,7 @@ identityRevealedValidator: ValidatorFn = (control: AbstractControl): ValidationE
     return (name && alterEgo && name.value === alterEgo.value) ? { identityRevaled: true } : null;
 }
 ```
-This validator is added to the form group of the above form builder as its _second_ key-vakue pair. (The first being the form group, of course.)
+This validator is added to the form group of the above form builder as its _second_ key-value pair. (The first being the elements of the form group, of course.)
 ```ts
 this.heroForm = this.fb.group({
     name: [
@@ -462,4 +462,4 @@ Now, the form can be modified to house this new validation.
     <button type="submit" [disabled]="heroForm.invalid">Submit</button>
 </form>
 ```
-Note that the errors being queued here is on `heroForm`, instead of `name`. That's because the validator was applied to the form group (`heroForm`) instead of the form control (`name`).
+Note that the `errors` being queued here is on `heroForm`, instead of `name`. That's because the validator was applied to the form group (`heroForm`) instead of the form control (`name`).
