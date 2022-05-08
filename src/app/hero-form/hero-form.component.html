@@ -8,6 +8,12 @@
             Name should be min 4 characters long
         </div>
         <div *ngIf="name.errors?.forbiddenName"><em>Voldemort</em> is a forbidden name.</div>
+    </div> <br>
+
+    <label for="alterEgo">Alter Ego:</label>
+    <input type="text" formControlName="alterEgo"> <br>
+    <div *ngIf="alterEgo.invalid && (alterEgo.dirty || alterEgo.touched)">
+        <div *ngIf="alterEgo.errors?.alterEgoTaken">This alter ego is already taken.</div>
     </div>
 
     <div *ngIf="heroForm.errors?.identityRevaled">

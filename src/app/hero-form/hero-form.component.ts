@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, AsyncValidatorFn } from '@angular/forms';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 // NOTE: no need of a separate directive for reactive forms; writing a validator method will suffice.
 // import { forbiddenNameValidator } from '../forbidden-name-validator.directive';
+import { HeroesService } from '../heroes.service';
 
 @Component({
   selector: 'app-hero-form',
@@ -13,7 +16,10 @@ export class HeroFormComponent implements OnInit {
   public powers: Array<string>;
   public hero: any;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(
+    private fb: FormBuilder,
+    private heroesService: HeroesService
+  ) { }
 
   ngOnInit(): void {
     this.powers = ['Really Smart', 'Super Flexible', 'Weather Changer'];
@@ -28,7 +34,7 @@ export class HeroFormComponent implements OnInit {
           this.forbiddenNameValidator(/voldemort/i)
         ]
       ],
-      alterEgo: [this.hero.alterEgo],
+      alterEgo: [this.hero.alterEgo, [], [this.alterEgoValidator]],
       power: [this.hero.power, Validators.required]
     }, {
       // NOTE: Just mention the validator (don't call) if it is applied to a form group
@@ -40,6 +46,8 @@ export class HeroFormComponent implements OnInit {
 
   get power() { return this.heroForm.get('power') };
 
+  get alterEgo() { return this.heroForm.get('alterEgo') };
+
   submission() {
     console.log('Errors in this form:', this.name.errors);
   }
@@ -49,7 +57,7 @@ export class HeroFormComponent implements OnInit {
     // return a method that takes in a form control and returns a ValidationErrors object
     return (control: AbstractControl): ValidationErrors => {
       const forbidden = nameRe.test(control.value);
-      return forbidden ? {forbiddenName: {value: control.value}} : null
+      return forbidden ? { forbiddenName: {value: control.value} } : null
     }
   }
 
@@ -57,6 +65,13 @@ export class HeroFormComponent implements OnInit {
     const name = control.get('name');
     const alterEgo = control.get('alterEgo');
     return (name && alterEgo && name.value === alterEgo.value) ? { identityRevaled: true } : null;
+  }
+
+  alterEgoValidator: AsyncValidatorFn = (control: AbstractControl): Observable<ValidationErrors | null> => {
+    return this.heroesService.isAlterEgoTaken(control.value).pipe(
+      map(isTaken => isTaken ? { alterEgoTaken: true } : null),
+      catchError(() => of(null))
+    )
   }
   // VALIDATORS END HERE
 
