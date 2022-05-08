@@ -309,6 +309,7 @@ The validators `required` and `minlength` added to the `name` control of the for
     <button type="submit" [disabled]="heroForm.invalid">Submit</button>
 </form>
 ```
+**Note.** The `Validators.required` validator in the `name` field of the TS is plenty to make the name field mandatory; the `required` attribute in the `<input>` element is not needed. However, it should still be added because is will be used for accessibility purposes.
 
 ## Custom Validators
 The above validators were built in to Angular. Custom validators can be created as _methods_ that return a validator method.
@@ -389,7 +390,6 @@ Therefore, the above div block containing the error messages for the `name` fiel
     <button type="submit" [disabled]="heroForm.invalid">Submit</button>
 </form>
 ```
-
 And the CSS can be modified to show the error status as green or red based on it is valid or invalid respectively. (I'm using SCSS here.)
 ```scss
 $valid-status: #42A948; /* green */
@@ -404,3 +404,62 @@ $invalid-status: #a94442; /* red */
 }
 ```
 
+## Cross Field Validation
+The above custom validator checked the name field _independent_ of the other fields.
+
+Cross field validation comes into play when the value of a field being valid or not depends on the value of some other field. This type of validator is applied in the _form group_ as a whole, and not in an individual form control.
+
+For example, to make sure the `name` of a hero does not match its `alterEgo`, here is a validator method that can make that check.
+```ts
+identityRevealedValidator: ValidatorFn = (control: AbstractControl): ValidationErrors => {
+    const name = control.get('name');
+    const alterEgo = control.get('alterEgo');
+    return (name && alterEgo && name.value === alterEgo.value) ? { identityRevaled: true } : null;
+}
+```
+This validator is added to the form group of the above form builder as its _second_ key-vakue pair. (The first being the form group, of course.)
+```ts
+this.heroForm = this.fb.group({
+    name: [
+        this.hero.name, [
+          Validators.required,
+          Validators.minLength(4),
+          // NOTE: call the validator if it is applied to a form control
+          this.forbiddenNameValidator(/voldemort/i)
+        ]
+      ],
+      alterEgo: [this.hero.alterEgo],
+      power: [this.hero.power, Validators.required]
+    }, {
+      // NOTE: Just mention the validator (don't call) if it is applied to a form group
+    validators: [this.identityRevealedValidator]  // this line
+});
+```
+The validator is added in the array which happens to be the value of the `validators` key. If there are multiple validators, they could be pushed to this validators array when needed.
+
+Now, the form can be modified to house this new validation.
+```html
+<form [formGroup]="heroForm" (ngSubmit)="submission()">
+    <label for="name">Name: </label>
+    <input type="text" required id="name" class="form-control" formControlName="name">
+
+    <div *ngIf="name.invalid && (name.dirty || name.touched)">
+        <div *ngIf="name.errors?.required">Name is required</div>
+        <div *ngIf="name.errors?.minlength">
+            Name should be min 4 characters long
+        </div>
+        <div *ngIf="name.errors?.forbiddenName"><em>Voldemort</em> is a forbidden name.</div>
+    </div>
+
+    <!-- NOTE: this following block -->
+    <div *ngIf="heroForm.errors?.identityRevaled">
+        Name and Alter Ego cannot be the same.
+    </div>
+
+    <br><br>
+    <div>Validation status: <span class="heroForm-status" [innerHTML]="heroForm.status"></span></div>
+    <br>
+    <button type="submit" [disabled]="heroForm.invalid">Submit</button>
+</form>
+```
+Note that the errors being queued here is on `heroForm`, instead of `name`. That's because the validator was applied to the form group (`heroForm`) instead of the form control (`name`).
