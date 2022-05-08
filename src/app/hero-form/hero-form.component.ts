@@ -32,7 +32,7 @@ export class HeroFormComponent implements OnInit {
       power: [this.hero.power, Validators.required]
     }, {
       // NOTE: Just mention the validator (don't call) if it is applied to a form group
-      validators: this.identityRevealedValidator
+      validators: [this.identityRevealedValidator]
     });
   }
 
