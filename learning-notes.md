@@ -271,7 +271,90 @@ Finally, in the view, add a div to show all hobby arrays (as form inputs) and a 
 ```
 
 # Validating form input
-Skipping much of the content for now, and jumping directly to the one I want to. Will cover the remaining content soon enough.
+This section will contain notes of validation of _reactive forms_ only. Template-driven are skipped.
+
+## Adding Sync Validators to `FormBuilder`
+Inside a form builder, the sync validators can be added as an array in the _second element_ of a form control array. For example:
+```ts
+this.powers = ['Really Smart', 'Super Flexible', 'Weather Changer'];
+this.hero = { name: 'Dr.', alterEgo: 'Dr. What', power: this.powers[0] };
+this.heroForm = this.fb.group({
+    name: [
+        this.hero.name, [
+            // validators will go in this array
+            Validators.required,
+            Validators.minLength(4)
+        ]
+    ],
+    alterEgo: [this.hero.alterEgo],
+    power: [this.hero.power, Validators.required]
+});
+```
+The validators `required` and `minlength` added to the `name` control of the form can then be used in the view as:
+```html
+<form [formGroup]="heroForm"">
+    <label for="name">Name: </label>
+    <input type="text" required id="name" class="form-control" formControlName="name">
+
+    <div *ngIf="name.invalid">
+        <div *ngIf="name.errors?.required">Name is required</div>
+        <div *ngIf="name.errors?.minlength"> <!-- NOTE: in view => minlength, in TS => minLength -->
+            Name should be min 4 characters long
+        </div>
+    </div>
+
+    <br><br>
+    <div>Validation status: <span class="heroForm-status" [innerHTML]="heroForm.status"></span></div>
+    <br>
+    <button type="submit" [disabled]="heroForm.invalid">Submit</button>
+</form>
+```
+
+## Custom Validators
+The above validators were built in to Angular. Custom validators can be created as _methods_ that return a validator method.
+
+A validator method implements the `ValidatorFn` interafce. Basically, it:
+- takes a form control as parameter
+- performs validation based on the value of that control
+- returns an object containing errors, if any, or `null` otherwise.
+
+The data type of the form control is `AbstractControl` and the return type of the validator method is `ValidationErrors`.
+
+For example, the following method, `forbiddenNameValidator`, can be a custom validator for the above `name` field.
+```ts
+forbiddenNameValidator(nameRe: RegExp): ValidatorFn {
+    // return a method that takes in a form control and returns a ValidationErrors object
+    return (control: AbstractControl): ValidationErrors => {
+      const forbidden = nameRe.test(control.value);
+      return forbidden ? {forbiddenName: {value: control.value}} : null
+    }
+}
+```
+The above form builder can be modified slightly to incorporate this custom validator in the `name` field.
+```ts
+this.heroForm = this.fb.group({
+    name: [
+        this.hero.name, [
+            Validators.required,
+            Validators.minLength(4),
+            this.forbiddenNameValidator(/voldemort/i)  // NOTE: this line
+        ]
+    ],
+    alterEgo: [this.hero.alterEgo],
+    power: [this.hero.power, Validators.required]
+});
+```
+And finally, error messages can be shown in the view based on this validator.
+```html
+<div *ngIf="name.invalid && (name.dirty || name.touched)">
+    <div *ngIf="name.errors?.required">Name is required</div>
+    <div *ngIf="name.errors?.minlength">
+        Name should be min 4 characters long
+    </div>
+    <!-- NOTE: this following block -->
+    <div *ngIf="name.errors?.forbiddenName"><em>Voldemort</em> is a forbidden name.</div>
+</div>
+```
 
 ## Control Status CSS Classes
 The status of the form can be obtained through the following CSS classes.
@@ -285,5 +368,39 @@ The status of the form can be obtained through the following CSS classes.
 .ng-pending
 .ng-submitted  /* only on form element enclosures */
 ```
+Therefore, the above div block containing the error messages for the `name` field can be modified to only show up when the name has been changed or blurred.
+```html
+<form [formGroup]="heroForm" (ngSubmit)="submission()">
+    <label for="name">Name: </label>
+    <input type="text" required id="name" class="form-control" formControlName="name">
 
+    <!-- NOTE: The following line -->
+    <div *ngIf="name.invalid && (name.dirty || name.touched)">
+        <div *ngIf="name.errors?.required">Name is required</div>
+        <div *ngIf="name.errors?.minlength">
+            Name should be min 4 characters long
+        </div>
+        <div *ngIf="name.errors?.forbiddenName"><em>Voldemort</em> is a forbidden name.</div>
+    </div>
+
+    <br><br>
+    <div>Validation status: <span class="heroForm-status" [innerHTML]="heroForm.status"></span></div>
+    <br>
+    <button type="submit" [disabled]="heroForm.invalid">Submit</button>
+</form>
+```
+
+And the CSS can be modified to show the error status as green or red based on it is valid or invalid respectively. (I'm using SCSS here.)
+```scss
+$valid-status: #42A948; /* green */
+$invalid-status: #a94442; /* red */
+
+.ng-invalid .heroForm-status {
+    color: $invalid-status;
+}
+
+.ng-valid .heroForm-status {
+    color: $valid-status;
+}
+```
 
