@@ -366,7 +366,7 @@ The status of the form can be obtained through the following CSS classes.
 .ng-dirty /* when the user changes the value in the watched field */
 .ng-touched /* when the user blurs the form control element */
 .ng-untouched /* when the user is yet to focus on the form field */
-.ng-pending
+.ng-pending /* when an async validation is happening*/
 .ng-submitted  /* only on form element enclosures */
 ```
 Therefore, the above div block containing the error messages for the `name` field can be modified to only show up when the name has been changed or blurred.
@@ -463,3 +463,70 @@ Now, the form can be modified to house this new validation.
 </form>
 ```
 Note that the `errors` being queued here is on `heroForm`, instead of `name`. That's because the validator was applied to the form group (`heroForm`) instead of the form control (`name`).
+
+## Async Validations
+So far, all the validations done were synchronous in nature. Async validations need to be performed when an async operation happens, like validating the results of an API call.
+
+Async validators are defined much the same way sync validators are, with _two_ key differences:
+- The validator itself implements `AsyncValidatorFn` (instead of `ValidatorFn`).
+- The validating method returns an **observable** of `ValidationErrors`, instead of just `ValidationErrors`. (The value of these errors is same as sync: an object with error flags).
+
+For example, in order to make sure an alter ego chosen is not already taken by someone else, the following async validator is defined.
+```ts
+alterEgoValidator: AsyncValidatorFn = (control: AbstractControl): Observable<ValidationErrors | null> => {
+    return this.heroesService.isAlterEgoTaken(control.value).pipe(
+      map(isTaken => isTaken ? { alterEgoTaken: true } : null),
+      catchError(() => of(null))
+    )
+}
+```
+The `heroesService` defines the method `isAlterEgo` which takes the value of the alter ego chosen, and asynchronously checks if it already belongs to the array of pre-existing alter egos. For more details on the definition of this service, check out [heroes.service.ts](src/app/heroes.service.ts).
+
+Then, this validator is put in the form builder as the _third_ paramter of the `alterEgo` control. As there is no sync validations happening for this control, the second paramter is kept as an empty array.
+```ts
+this.heroForm = this.fb.group(
+    {name: [
+        this.hero.name, [
+            Validators.required,
+            Validators.minLength(4),
+            this.forbiddenNameValidator(/voldemort/i)
+        ]
+    ],
+    alterEgo: [this.hero.alterEgo, [], [this.alterEgoValidator]],  // NOTE: this line
+    power: [this.hero.power, Validators.required]
+    }, {
+    validators: [this.identityRevealedValidator]
+    }
+);
+```
+Finally, add blocks in the view for this validation. When the async validation happens, the form will change from valid / invalid or any other state to **pending** state. The final form looks like this.
+```html
+<form [formGroup]="heroForm" (ngSubmit)="submission()">
+    <label for="name">Name: </label>
+    <input type="text" required id="name" class="form-control" formControlName="name">
+
+    <div *ngIf="name.invalid && (name.dirty || name.touched)">
+        <div *ngIf="name.errors?.required">Name is required</div>
+        <div *ngIf="name.errors?.minlength">
+            Name should be min 4 characters long
+        </div>
+        <div *ngIf="name.errors?.forbiddenName"><em>Voldemort</em> is a forbidden name.</div>
+    </div> <br>
+
+    <!-- NOTE: this block below -->
+    <label for="alterEgo">Alter Ego:</label>
+    <input type="text" formControlName="alterEgo"> <br>
+    <div *ngIf="alterEgo.invalid && (alterEgo.dirty || alterEgo.touched)">
+        <div *ngIf="alterEgo.errors?.alterEgoTaken">This alter ego is already taken.</div>
+    </div>
+
+    <div *ngIf="heroForm.errors?.identityRevaled">
+        Name and Alter Ego cannot be the same.
+    </div>
+
+    <br><br>
+    <div>Validation status: <span class="heroForm-status" [innerHTML]="heroForm.status"></span></div>
+    <br>
+    <button type="submit" [disabled]="heroForm.invalid">Submit</button>
+</form>
+```
