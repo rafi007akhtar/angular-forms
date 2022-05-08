@@ -10,6 +10,10 @@
         <div *ngIf="name.errors?.forbiddenName"><em>Voldemort</em> is a forbidden name.</div>
     </div>
 
+    <div *ngIf="heroForm.errors?.identityRevaled">
+        Name and Alter Ego cannot be the same.
+    </div>
+
     <br><br>
     <div>Validation status: <span class="heroForm-status" [innerHTML]="heroForm.status"></span></div>
     <br>

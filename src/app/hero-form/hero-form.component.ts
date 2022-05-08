@@ -24,11 +24,15 @@ export class HeroFormComponent implements OnInit {
         this.hero.name, [
           Validators.required,
           Validators.minLength(4),
+          // NOTE: call the validator if it is applied to a form control
           this.forbiddenNameValidator(/voldemort/i)
         ]
       ],
       alterEgo: [this.hero.alterEgo],
       power: [this.hero.power, Validators.required]
+    }, {
+      // NOTE: Just mention the validator (don't call) if it is applied to a form group
+      validators: this.identityRevealedValidator
     });
   }
 
@@ -40,6 +44,7 @@ export class HeroFormComponent implements OnInit {
     console.log('Errors in this form:', this.name.errors);
   }
 
+  // VALIDATORS BEGIN FROM HERE
   forbiddenNameValidator(nameRe: RegExp): ValidatorFn {
     // return a method that takes in a form control and returns a ValidationErrors object
     return (control: AbstractControl): ValidationErrors => {
@@ -47,5 +52,12 @@ export class HeroFormComponent implements OnInit {
       return forbidden ? {forbiddenName: {value: control.value}} : null
     }
   }
+
+  identityRevealedValidator: ValidatorFn = (control: AbstractControl): ValidationErrors => {
+    const name = control.get('name');
+    const alterEgo = control.get('alterEgo');
+    return (name && alterEgo && name.value === alterEgo.value) ? { identityRevaled: true } : null;
+  }
+  // VALIDATORS END HERE
 
 }
