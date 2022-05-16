@@ -2,7 +2,7 @@
 
 import { Component } from '@angular/core';
 
-export type EditorType = 'hero' | 'profile' | 'name';
+export type EditorType = 'hero' | 'profile' | 'name' | 'dynamic';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +23,10 @@ export class AppComponent {
 
   get showHeroForm() {
     return this.editor === 'hero';
+  }
+
+  get dynamicForm() {
+    return this.editor === 'dynamic';
   }
 
   toggleEditor(editorChosen: EditorType) {

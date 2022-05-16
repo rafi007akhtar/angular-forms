@@ -6,7 +6,8 @@
 <nav>
   <button type="button" (click)="toggleEditor('name')">Name Editor</button> &emsp;
   <button type="button" (click)="toggleEditor('profile')">Profile Editor</button> &emsp;
-  <button type="button" (click)="toggleEditor('hero')">Hero Form</button>
+  <button type="button" (click)="toggleEditor('hero')">Hero Form</button> &emsp;
+  <button type="button" (click)="toggleEditor('dynamic')">Dynamic</button>
 </nav>
 
 <br>
@@ -16,3 +17,5 @@
 <app-profile-editor *ngIf="showProfileEditor"></app-profile-editor>
 
 <app-hero-form *ngIf="showHeroForm"></app-hero-form>
+
+<app-dynamic-form-question-component *ngIf="dynamicForm"></app-dynamic-form-question-component>

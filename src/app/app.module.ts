@@ -10,6 +10,7 @@ import { NameEditorComponent } from './name-editor/name-editor.component';
 import { ProfileEditorComponent } from './profile-editor/profile-editor.component';
 import { HeroFormComponent } from './hero-form/hero-form.component';
 import { ForbiddenNameValidatorDirective } from './forbidden-name-validator.directive';
+import { DynamicFormQuestionComponentComponent } from './dynamic-form-question-component/dynamic-form-question-component.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { ForbiddenNameValidatorDirective } from './forbidden-name-validator.dire
     NameEditorComponent,
     ProfileEditorComponent,
     HeroFormComponent,
-    ForbiddenNameValidatorDirective
+    ForbiddenNameValidatorDirective,
+    DynamicFormQuestionComponentComponent
   ],
   imports: [
     BrowserModule,
