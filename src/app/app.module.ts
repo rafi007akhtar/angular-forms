@@ -11,6 +11,7 @@ import { ProfileEditorComponent } from './profile-editor/profile-editor.componen
 import { HeroFormComponent } from './hero-form/hero-form.component';
 import { ForbiddenNameValidatorDirective } from './forbidden-name-validator.directive';
 import { DynamicFormQuestionComponent } from './dynamic-form-question/dynamic-form-question.component';
+import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { DynamicFormQuestionComponent } from './dynamic-form-question/dynamic-fo
     ProfileEditorComponent,
     HeroFormComponent,
     ForbiddenNameValidatorDirective,
-    DynamicFormQuestionComponent
+    DynamicFormQuestionComponent,
+    DynamicFormComponent
   ],
   imports: [
     BrowserModule,
