@@ -11,7 +11,7 @@ export type EditorType = 'hero' | 'profile' | 'name' | 'dynamic';
 })
 export class AppComponent {
   title = 'angular-forms';
-  editor: EditorType = 'hero';
+  editor: EditorType = 'dynamic';
 
   get showNameEditor() {
     return this.editor === 'name';
