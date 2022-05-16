@@ -34,7 +34,11 @@ export class HeroFormComponent implements OnInit {
           this.forbiddenNameValidator(/voldemort/i)
         ]
       ],
-      alterEgo: [this.hero.alterEgo, [], [this.alterEgoValidator]],
+      alterEgo: [
+        this.hero.alterEgo,
+        [Validators.required],
+        [this.alterEgoValidator]
+      ],
       power: [this.hero.power, Validators.required]
     }, {
       // NOTE: Just mention the validator (don't call) if it is applied to a form group
