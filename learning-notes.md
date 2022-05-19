@@ -530,3 +530,260 @@ Finally, add blocks in the view for this validation. When the async validation h
     <button type="submit" [disabled]="heroForm.invalid">Submit</button>
 </form>
 ```
+
+# Building Dynamic Forms
+Dynamic forms are created by creating a template of form elemenets common to multiple forms in a component, and then applying that component as needed in the main form component.
+
+First thing to do is creating a _type_ which will house the versatile form control. This could be related to the question being asked. The type is a class with attributes holding the common form elements, and passed along as constructor parameters. The constructor will assign default values to these attributes if their parameters are not defined.
+
+The base question class I used (read "ripped from Angular's docs") is the following.
+```ts
+export class QuestionBase<T> {
+    value: T | undefined;
+    key: string;
+    label: string;
+    required: boolean;
+    order: number;
+    controlType: string;
+    type: string;
+    options: Array<{ key: string, value: string }>
+
+    constructor(
+        options: {
+            value?: T,
+            key?: string;
+            label?: string;
+            required?: boolean;
+            order?: number;
+            controlType?: string;
+            type?: string;
+            options?: Array<{ key: string, value: string }>
+        } = { }
+    ) {
+        this.value = options.value;
+        this.key = options.key || '';
+        this.label = options.label || '';
+        this.required = !!options.required;
+        this.order = options.order === undefined ? 1 : options.order;
+        this.controlType = options.controlType || '';
+        this.type = options.type || '';
+        this.options = options.options || [];
+    }
+}
+```
+
+This class can then be extended to child classes which are same in every way but unique in some. For example, the control can be a text field or a dropdown depending on the type of the question.
+
+Text child class:
+```ts
+import { QuestionBase } from './question-base';
+
+export class TextboxQuestion extends QuestionBase<string> {
+    controlType = 'textbox';
+}
+```
+Dropdown child class:
+```ts
+import { QuestionBase } from './question-base';
+
+export class DropdownQuestion extends QuestionBase<string> {
+    controlType = 'dropdown';
+}
+
+```
+
+These child classes encapsulate _one_ question each, and therefore can be the blueprint for one form control. A service can be created to gather these controls and turn them in a form group. It would look like this.
+```ts
+import { Injectable } from '@angular/core';
+import { QuestionBase } from './dynamic-form-question/question-base';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class QuestionControlService {
+
+  constructor() { }
+
+  toFormGroup(questions: QuestionBase<string>[]) {
+    const group = {};
+    questions.forEach((question: QuestionBase<string>) => {
+      group[question.key] = question.required
+        ? new FormControl(question.value || '', Validators.required)
+        : new FormControl(question.value || '');
+    });
+    return new FormGroup(group);
+  }
+}
+```
+
+Then we will need a component that will use a `switch` directive to switch between one question or the other, perform some basic validation, and put together a basis for this dynamic form. The strength of this approach lies in getting to choose what kind of control is needed for which question in the dynamic form.
+
+So its TS would be basic and look like this:
+```ts
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { QuestionBase } from './question-base';
+
+@Component({
+  selector: 'app-dynamic-form-question',
+  templateUrl: './dynamic-form-question.component.html',
+  styleUrls: ['./dynamic-form-question.component.scss']
+})
+export class DynamicFormQuestionComponent implements OnInit {
+  @Input() question!: QuestionBase<string>;
+  @Input() form!: FormGroup;
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+  get isValid() {
+    return this.form.controls[this.question.key].valid;
+  }
+
+}
+```
+
+The `question` and `form` are non-nullable attributes that can be obtained from the other component using this one.
+
+The template will look like this:
+```html
+<div [formGroup]="form">
+    <label [attr.for]="question.key">{{ question.label }}</label>
+
+    <div [ngSwitch]="question.controlType">
+        <input *ngSwitchCase="'textbox'"
+            [type]="question.type" [id]="question.key"
+            [formControlName]="question.key"
+        />
+        
+        <select *ngSwitchCase="'dropdown'"
+            [id]="question.key"
+            [formControlName]="question.key"
+        >
+            <option *ngFor="let opt of question.options" [value]="opt.key"> {{opt.value }} </option>
+        </select>
+    </div>
+
+    <div class="errorMessage" *ngIf="!isValid"> {{ question.label }} is required.</div>
+</div>
+```
+
+Before heading over the final component which will be the form, we need the data for the above question controls. This data should ideally come from an API and be injected as a service, but here it is hardcoded in a service, and looks like this.
+```ts
+import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
+import { QuestionBase } from './dynamic-form-question/question-base';
+import { DropdownQuestion } from './dynamic-form-question/question-dropdown';
+import { TextboxQuestion } from './dynamic-form-question/question-textbox';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class QuestionService {
+
+  constructor() { }
+
+  getQuestions() {
+    const questions: QuestionBase<string>[] = [
+
+      new DropdownQuestion({
+        key: 'brave',
+        label: 'Bravery Rating',
+        options: [
+          {key: 'solid',  value: 'Solid'},
+          {key: 'great',  value: 'Great'},
+          {key: 'good',   value: 'Good'},
+          {key: 'unproven', value: 'Unproven'}
+        ],
+        order: 3
+      }),
+
+      new TextboxQuestion({
+        key: 'firstName',
+        label: 'First name',
+        value: 'Bombasto',
+        required: true,
+        order: 1
+      }),
+
+      new TextboxQuestion({
+        key: 'emailAddress',
+        label: 'Email',
+        type: 'email',
+        order: 2
+      })
+    ];
+
+    return of(questions.sort((a, b) => a.order - b.order))
+
+  }
+}
+```
+
+Finally, heading over to the main form component, this component will call the method of the above service for the form element data, and feed it to the other service that was created to obtain the form group. Like this:
+```ts
+import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { QuestionBase } from '../dynamic-form-question/question-base';
+import { QuestionService } from '../question.service';
+import { QuestionControlService } from '../question-control.service';
+
+@Component({
+  selector: 'app-dynamic-form',
+  templateUrl: './dynamic-form.component.html',
+  styleUrls: ['./dynamic-form.component.scss']
+})
+export class DynamicFormComponent implements OnInit {
+  questions: QuestionBase<string>[];
+  form!: FormGroup;
+  payLoad = ''
+
+  constructor(
+    private qs: QuestionService,
+    private qcs: QuestionControlService
+  ) { }
+
+  ngOnInit(): void {
+    this.qs.getQuestions().subscribe(ques => {
+      this.questions = ques;
+      if (this.questions && this.questions.length > 0) {
+        this.populateTheForm();
+      }
+    })
+  }
+
+  populateTheForm() {
+    this.form = this.qcs.toFormGroup(this.questions as QuestionBase<string>[])
+  }
+
+  onSubmit() {
+    this.payLoad = JSON.stringify(this.form.getRawValue());
+    console.log('payLoad:', this.payLoad);
+  }
+
+}
+```
+Using the repeater directive `*ngFor`, all these questions are finally shown in the form as below.
+```html
+<div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div *ngFor="let question of questions" class="form-row">
+            <app-dynamic-form-question [question]="question" [form]="form"></app-dynamic-form-question>
+        </div>
+
+        <div class="form-row">
+            <button type="submit" [disabled]="!form.valid">Save</button>
+        </div>
+    </form>
+
+    <div *ngIf="payLoad" class="form-row">
+        <strong>Saved the following values</strong><br>{{payLoad}}
+    </div>
+</div>
+```
+
+And that's it. That just covers about every concept I used to replicate this project from the Angular docs and learn about Reactive Forms.
+
